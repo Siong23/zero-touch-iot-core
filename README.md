@@ -25,19 +25,19 @@
                                             | TM Forum Open APIs
                                             ↓
            +------------------------------------------------------------+
-           |              OpenSlice (Service Orchestrator)             |
-           | - Manages service/slice lifecycles                        |
-           | - Handles catalogs and orders                             |
-           | - Translates service requests into Helm/K8s deployments   |
-           +---------------------↓-------------------------------------+
+           |              OpenSlice (Service Orchestrator)              |
+           | - Manages service/slice lifecycles                         |
+           | - Handles catalogs and orders                              |
+           | - Translates service requests into Helm/K8s deployments    |
+           +--------------------------------↓---------------------------+
                                     Kubernetes API (kubectl / Helm)
                                             ↓
            +------------------------------------------------------------+
-           |           Kubernetes Cluster (Core / Edge Nodes)          |
-           | - Runs CNFs (e.g., MQTT, InfluxDB, AI Inference)          |
-           | - Namespace-based isolation for each tenant/slice         |
-           | - Autoscaling, Monitoring, Service Mesh (Istio/Linkerd)   |
-           +---------------------↓-------------------------------------+
+           |           Kubernetes Cluster (Core / Edge Nodes)           |
+           | - Runs CNFs (e.g., MQTT, InfluxDB, AI Inference)           |
+           | - Namespace-based isolation for each tenant/slice          |
+           | - Autoscaling, Monitoring, Service Mesh (Istio/Linkerd)    |
+           +--------------------------------↓---------------------------+
                                   CNF Pods and Services
 
 
