@@ -1,0 +1,25 @@
+@startuml
+actor "User (Tenant/Admin)" as User
+participant "Self-Service UI\n(OSS/BSS Portal)" as Portal
+participant "OpenSlice\n(Service Orchestrator)" as OpenSlice
+participant "Kubernetes API\n(kubectl/Helm)" as K8sAPI
+participant "Kubernetes Cluster\n(Core/Edge Nodes)" as Cluster
+participant "CNF Services\n(MQTT, AI, InfluxDB)" as CNFs
+participant "Prometheus/Grafana\n(Monitoring)" as Monitor
+
+== Zero-Touch Service Deployment Flow ==
+
+User -> Portal : Place IoT Slice/Service Order
+Portal -> OpenSlice : Send Order (TMF Open APIs)
+OpenSlice -> OpenSlice : Validate & Translate Order
+OpenSlice -> K8sAPI : Trigger Helm Charts\nfor CNF deployment
+K8sAPI -> Cluster : Apply Deployment\n(Create Namespaces, CNFs)
+Cluster -> CNFs : Start CNF Pods\n(MQTT, InfluxDB, AI, etc.)
+
+== Monitoring and Feedback ==
+
+CNFs -> Monitor : Export metrics via Prometheus
+Monitor -> Portal : Display status\n(Grafana dashboards)
+Portal -> User : Show Slice Status,\nHealth & Logs
+
+@enduml
