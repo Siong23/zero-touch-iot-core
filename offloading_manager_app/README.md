@@ -15,3 +15,33 @@ docker run --rm --network host -v /etc/rancher/k3s/k3s.yaml:/etc/rancher/k3s/k3s
 ```
 
 4. Deploy using Kubernetes:
+
+    Create a single pod manifest:
+   
+```yaml
+# offloading-manager-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: offloading-manager
+spec:
+  hostNetwork: true
+  containers:
+    - name: offloading-manager
+      image: <image-name>:<tag>
+      volumeMounts:
+        - name: k3s-config
+          mountPath: /etc/rancher/k3s/k3s.yaml
+          subPath: k3s.yaml
+  volumes:
+    - name: k3s-config
+      hostPath:
+        path: /etc/rancher/k3s/k3s.yaml
+        type: File
+  ```
+
+  Apply the pod:
+```bash
+kubectl apply -f offloading-manager-pod.yaml
+```
