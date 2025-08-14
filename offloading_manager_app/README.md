@@ -27,7 +27,7 @@ metadata:
   name: offloading-manager
 spec:
   nodeSelector:
-    kubernetes.io/hostname: nuc2
+    kubernetes.io/hostname: <your-node-name>
   hostNetwork: true
   containers:
     - name: offloading-manager
