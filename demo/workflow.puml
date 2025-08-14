@@ -1,25 +1,64 @@
 @startuml
-actor "User (Tenant/Admin)" as User
-participant "Self-Service UI\n(OSS/BSS Portal)" as Portal
-participant "OpenSlice\n(Service Orchestrator)" as OpenSlice
-participant "Kubernetes API\n(kubectl/Helm)" as K8sAPI
-participant "Kubernetes Cluster\n(Core/Edge Nodes)" as Cluster
-participant "CNF Services\n(MQTT, AI, InfluxDB)" as CNFs
-participant "Prometheus/Grafana\n(Monitoring)" as Monitor
+title Cloud-Native + IoT Orchestration Demo (End-to-End)
 
-== Zero-Touch Service Deployment Flow ==
+actor Operator
+participant "OpenSlice\n(Service Orchestrator)" as OS
+participant "NFVO/VNFM\n(or CNF Orchestrator)" as NFV
+participant "Kubernetes\n(IoT Workloads)" as K8s
+participant "IoT Platform\n(Devices, Rules, Topics)" as IOT
+participant "IoT Device(s)" as DEV
+participant "Observability\n(Prometheus/Grafana)" as OBS
+participant "Policy Engine\n(HPA/KEDA + Alerting)" as POL
 
-User -> Portal : Place IoT Slice/Service Order
-Portal -> OpenSlice : Send Order (TMF Open APIs)
-OpenSlice -> OpenSlice : Validate & Translate Order
-OpenSlice -> K8sAPI : Trigger Helm Charts\nfor CNF deployment
-K8sAPI -> Cluster : Apply Deployment\n(Create Namespaces, CNFs)
-Cluster -> CNFs : Start CNF Pods\n(MQTT, InfluxDB, AI, etc.)
+== Stage 1: Instantiate ==
+Operator -> OS : Order IoT Service (SLA/QoS requirements)
+OS -> NFV : Instantiate Network Slice (NSD/CNF params)
+NFV --> OS : Slice Ready (endpoints/QoS handles)
 
-== Monitoring and Feedback ==
+OS -> K8s : Deploy IoT microservices (helm/apply)
+K8s --> OS : Deployments Ready (broker/API/analytics)
 
-CNFs -> Monitor : Export metrics via Prometheus
-Monitor -> Portal : Display status\n(Grafana dashboards)
-Portal -> User : Show Slice Status,\nHealth & Logs
+OS -> IOT : Publish service endpoints/credentials
+IOT --> OS : Devices bound to service (topics/rules)
+
+== Stage 2: Connect & Ingest ==
+DEV -> IOT : Connect (MQTT/HTTP), authenticate
+DEV -> IOT : Telemetry messages
+IOT -> K8s : Route data to ingestion/analytics
+K8s -> IOT : Ack/process results / actions
+
+OBS <- K8s : Scrape app metrics (latency, CPU, Q depth)
+OBS <- OS : Slice KPIs (throughput, latency, PLR)
+OBS <- IOT : Device/service KPIs (online rate, msg rate)
+
+== Stage 3: Closed-Loop ==
+OBS -> POL : Metric streams + alerts
+POL -> K8s : Scale up/down deployments (HPA/KEDA)
+K8s --> POL : Scaling result
+
+alt Slice QoS breached
+  POL -> OS : Request slice adjustment (increase bw/lower latency)
+  OS -> NFV : Reconfigure/scale network slice
+  NFV --> OS : Slice updated
+end
+
+OS -> Operator : Service health OK, SLO restored
+
+== Stage 4: Update (Optional) ==
+Operator -> K8s : Rollout new analytics version
+K8s -> OBS : Emit rollout and health metrics
+alt Health regression
+  POL -> K8s : Rollback to previous version
+end
+
+== Stage 5: Tear-Down ==
+Operator -> OS : Terminate service
+OS -> K8s : Delete IoT workloads
+OS -> NFV : Release network slice
+OS -> IOT : Unbind devices / revoke creds
+K8s --> OS : Resources removed
+NFV --> OS : Slice released
+IOT --> OS : Devices unbound
+OS -> Operator : Demo complete; export dashboards/logs
 
 @enduml
