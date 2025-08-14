@@ -34,7 +34,7 @@ spec:
       image: <image-name>:<tag>
       volumeMounts:
         - name: k3s-config
-          mountPath: /root/.kube/k3s.yaml   # Inside container
+          mountPath: /etc/rancher/k3s/k3s.yaml   # Inside container
           readOnly: true
       ##securityContext:
         ##runAsUser: 0
