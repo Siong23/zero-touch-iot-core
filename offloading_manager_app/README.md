@@ -36,8 +36,8 @@ spec:
         - name: k3s-config
           mountPath: /root/.kube/k3s.yaml   # Inside container
           readOnly: true
-      securityContext:
-        runAsUser: 0
+      ##securityContext:
+        ##runAsUser: 0
   volumes:
     - name: k3s-config
       hostPath:
