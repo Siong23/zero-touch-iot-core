@@ -34,6 +34,8 @@ spec:
         - name: k3s-config
           mountPath: /etc/rancher/k3s/k3s.yaml
           subPath: k3s.yaml
+      securityContext:
+        runAsUser: 0
   volumes:
     - name: k3s-config
       hostPath:
