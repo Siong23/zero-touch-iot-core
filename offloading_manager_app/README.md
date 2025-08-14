@@ -26,14 +26,16 @@ kind: Pod
 metadata:
   name: offloading-manager
 spec:
+  nodeSelector:
+    kubernetes.io/hostname: nuc2
   hostNetwork: true
   containers:
     - name: offloading-manager
       image: <image-name>:<tag>
       volumeMounts:
         - name: k3s-config
-          mountPath: /etc/rancher/k3s/k3s.yaml
-          subPath: k3s.yaml
+          mountPath: /root/.kube/k3s.yaml   # Inside container
+          readOnly: true
       securityContext:
         runAsUser: 0
   volumes:
