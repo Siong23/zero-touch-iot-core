@@ -1,9 +1,0 @@
-ZSM_project/
-├── detect_app/
-│   ├── detect.py
-│   ├── requirements.txt
-│   └── Dockerfile
-└── offloading_manager_app/
-    ├── offloading_manager.py
-    ├── requirements.txt
-    └── Dockerfile
