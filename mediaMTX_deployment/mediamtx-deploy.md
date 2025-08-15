@@ -1,4 +1,10 @@
-Deploy the mediamtx_deploy.yaml:
+Create mediamtx-deploy.yaml:
+```bash
+nano mediamtx-deploy.yaml
+```
+
+
+Deploy the mediamtx-deploy.yaml:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
