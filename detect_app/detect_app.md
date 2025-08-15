@@ -10,7 +10,7 @@ hostname -I
 ```
 
 
-Deploy the Objection Detection App:
+Deploy the Objection Detection App (detect.py):
 ```python
 # Copyright 2019 Google LLC
 #
