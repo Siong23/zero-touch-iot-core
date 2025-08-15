@@ -65,16 +65,17 @@ spec:
   selector:
     app: mediamtx
   type: NodePort
+ ```
 
 
 To deploy the server:
 ```bash
 bectl apply -f mediamtx-deploy.yaml
-```bash
+```
 
 
 Check the status of the deployment and the running pods:
 ```bash
 kubectl get deployments -o wide
 kubectl get pods -o wide
-```bash
+```
