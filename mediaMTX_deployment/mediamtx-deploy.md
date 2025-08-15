@@ -70,7 +70,7 @@ spec:
 
 To deploy the server:
 ```bash
-bectl apply -f mediamtx-deploy.yaml
+kubectl apply -f mediamtx-deploy.yaml
 ```
 
 
