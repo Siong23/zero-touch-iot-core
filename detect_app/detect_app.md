@@ -4,8 +4,13 @@ nano /home/nuc2/detect.py
 ```
 
 
+Check IP address of Raspberry Pi and put in detect.py:
+```bash
+hostname -I
+```
+
+
 Deploy the Objection Detection App:
-## Replace 192.168.0.160 with the IP address of Raspberry Pi (can check with command hostname -I).
 ```python
 # Copyright 2019 Google LLC
 #
@@ -72,8 +77,9 @@ def main():
     inference_size = input_size(interpreter)
 
     #cap = cv2.VideoCapture(args.camera_idx)
-    #cap = cv2.VideoCapture('rtsp://192.168.0.150:30000/unicast')
-    cap = cv2.VideoCapture('rtsp://admin:mmuzte123@192.168.254.2:554/cam/realmonitor?channel=1&subtype=1')
+    cap = cv2.VideoCapture('rtsp://192.168.0.160:30000/unicast')
+    ## Replace 192.168.0.160 with the IP address of Raspberry Pi (can check with command hostname -I).
+    #cap = cv2.VideoCapture('rtsp://admin:mmuzte123@192.168.254.2:554/cam/realmonitor?channel=1&subtype=1')
 
     while cap.isOpened():
         ret, frame = cap.read()
