@@ -1,4 +1,4 @@
-Deploy the mediamtx_deploy:
+Deploy the mediamtx_deploy.yaml:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -15,7 +15,7 @@ spec:
         app: mediamtx
     spec:
       nodeSelector:
-        kubernetes.io/hostname: iot
+        kubernetes.io/hostname: iot 
       containers:
       - name: mediamtx-container
         image: bluenviron/mediamtx:latest-rpi
@@ -65,3 +65,16 @@ spec:
   selector:
     app: mediamtx
   type: NodePort
+
+
+To deploy the server:
+```bash
+bectl apply -f mediamtx-deploy.yaml
+```bash
+
+
+Check the status of the deployment and the running pods:
+```bash
+kubectl get deployments -o wide
+kubectl get pods -o wide
+```bash
