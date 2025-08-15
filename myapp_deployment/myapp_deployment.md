@@ -1,4 +1,10 @@
-Deploy the mediamtx_deploy.yaml:
+Create myapp-deploy.yaml:
+```bash
+nano myapp-deploy.yaml
+```
+
+
+Deploy the myapp-deploy.yaml:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -76,7 +82,7 @@ spec:
 
 To deploy the app:
 ```bash
-kubectl apply -f myapp-deployment.yaml
+kubectl apply -f myapp-deploy.yaml
 ```
 
 
