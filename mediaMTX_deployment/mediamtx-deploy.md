@@ -15,7 +15,7 @@ spec:
         app: mediamtx
     spec:
       nodeSelector:
-        kubernetes.io/hostname: iot 
+        kubernetes.io/hostname: <device-name> ##iot
       containers:
       - name: mediamtx-container
         image: bluenviron/mediamtx:latest-rpi
