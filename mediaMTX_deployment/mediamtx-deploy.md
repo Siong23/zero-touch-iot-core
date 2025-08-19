@@ -7,11 +7,11 @@ nano mediamtx-deploy.yaml
 Deploy the mediamtx-deploy.yaml:
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: mediamtx-deployment
 spec:
-  replicas: 1
+  #replicas: 1
   selector:
     matchLabels:
       app: mediamtx
@@ -21,7 +21,7 @@ spec:
         app: mediamtx
     spec:
       nodeSelector:
-        kubernetes.io/hostname: <device-name> ##iot
+        role: iot
       containers:
       - name: mediamtx-container
         image: bluenviron/mediamtx:latest-rpi
