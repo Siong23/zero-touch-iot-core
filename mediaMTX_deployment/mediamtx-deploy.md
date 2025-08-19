@@ -4,6 +4,12 @@ nano mediamtx-deploy.yaml
 ```
 
 
+Delete mediamtx-deploy.yaml:
+```bash
+kubectl delete -f mediamtx-deploy.yaml
+```
+
+
 Deploy the mediamtx-deploy.yaml:
 ```yaml
 apiVersion: apps/v1
