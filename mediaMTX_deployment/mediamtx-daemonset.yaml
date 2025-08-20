@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mediamtx
+spec:
+  selector:
+    matchLabels:
+      app: mediamtx
+  template:
+    metadata:
+      labels:
+        app: mediamtx
+    spec:
+      nodeSelector:
+        role: iot
+      hostNetwork: true          # <-- Each pod binds directly to the node’s network namespace
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: mediamtx-container
+        image: bluenviron/mediamtx:latest-rpi
+        env:
+        - name: MTX_PROTOCOLS
+          value: "tcp"
+        - name: MTX_PATHS_UNICAST_SOURCE
+          value: "rpiCamera"
+        - name: MTX_PATHDEFAULTS_RPICAMERAWIDTH
+          value: "640"
+        - name: MTX_PATHDEFAULTS_RPICAMERAHEIGHT
+          value: "480"
+        - name: MTX_PATHDEFAULTS_RPICAMERAFPS
+          value: "10"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /run/udev
+          name: udev
+          readOnly: true
+        - mountPath: /dev/shm
+          name: shm-volume
+          readOnly: false
+        ports:
+        - containerPort: 8554    # still declared for clarity
+          name: rtsp
+      volumes:
+      - name: udev
+        hostPath:
+          path: /run/udev
+      - name: shm-volume
+        emptyDir:
+          medium: Memory
