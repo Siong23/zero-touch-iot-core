@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mediamtx-endpoints
+data:
+  0: "rtsp://rpi2:8554/unicast"
+  1: "rtsp://iot:8554/unicast"
