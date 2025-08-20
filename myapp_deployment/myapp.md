@@ -1,0 +1,114 @@
+Create myapp.yaml:
+```bash
+nano myapp.yaml
+```
+
+
+Deploy the myapp.yaml:
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  serviceName: "myapp"   # required for StatefulSet
+  replicas: 2            # should match number of RTSP endpoints in ConfigMap
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      # schedule onto edge nodes
+      nodeSelector:
+        role: edge
+      containers:
+      - name: myapp
+        image: siong23/classify-detect:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        env:
+        - name: DISPLAY
+          value: ":0"
+        - name: LD_LIBRARY_PATH
+          value: "/opt/vc/lib:/lib:/usr/lib:/usr/local/lib"
+        # expose pod index so each pod selects its RTSP endpoint
+        - name: POD_ORDINAL
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: RTSP_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: mediamtx-endpoints
+              key: "0"   # default, overridden below by command
+        command:
+          - "sh"
+          - "-c"
+          - |
+            INDEX=$(echo ${HOSTNAME##*-})
+            URL=$(cat /config/${INDEX})
+            echo "Starting myapp-$INDEX with RTSP=$URL"
+            exec python3 detect.py --url $URL
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config
+        - mountPath: /dev/vchiq
+          name: dev-vchiq
+        - mountPath: /dev/bus/usb
+          name: dev-bus-usb
+        - mountPath: /dev/vc
+          name: dev-vc
+        - mountPath: /dev/video0
+          name: dev-video0
+        - mountPath: /tmp/.X11-unix
+          name: tmp-x11-unix
+        - mountPath: /home/user/.Xauthority
+          name: xauthority
+        - mountPath: /coral/examples-camera/opencv/detect.py
+          name: config-volume2
+          subPath: detect.py
+      volumes:
+      - name: config-volume
+        configMap:
+          name: mediamtx-endpoints
+      - name: dev-vchiq
+        hostPath:
+          path: /dev/vchiq
+      - name: dev-bus-usb
+        hostPath:
+          path: /dev/bus/usb
+      - name: dev-vc
+        hostPath:
+          path: /dev/vc
+      - name: dev-video0
+        hostPath:
+          path: /dev/video0
+      - name: tmp-x11-unix
+        hostPath:
+          path: /tmp/.X11-unix
+      - name: xauthority
+        hostPath:
+          path: /home/pi/.Xauthority
+      - name: config-volume2
+        configMap:
+          name: myapp-config
+ ```
+
+
+To deploy the app:
+```bash
+kubectl apply -f myapp.yaml
+```
+
+
+Check the status of the deployment and the running pods:
+```bash
+kubectl get deployments -o wide
+kubectl get pods -o wide
+```
