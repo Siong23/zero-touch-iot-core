@@ -1,23 +1,22 @@
-Create mediamtx-deploy.yaml:
+Create mediamtx-daemonset.yaml:
 ```bash
-nano mediamtx-deploy.yaml
+nano mediamtx-daemonset.yaml
 ```
 
 
-Delete mediamtx-deploy.yaml:
+Delete mediamtx-daemonset.yaml:
 ```bash
-kubectl delete -f mediamtx-deploy.yaml
+kubectl delete -f mediamtx-daemonset.yaml
 ```
 
 
-Deploy the mediamtx-deploy.yaml:
+Deploy the mediamtx-daemonset.yaml:
 ```yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: mediamtx-deployment
+  name: mediamtx
 spec:
-  #replicas: 1
   selector:
     matchLabels:
       app: mediamtx
@@ -28,6 +27,8 @@ spec:
     spec:
       nodeSelector:
         role: iot
+      hostNetwork: true          # <-- Each pod binds directly to the node’s network namespace
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: mediamtx-container
         image: bluenviron/mediamtx:latest-rpi
@@ -52,7 +53,7 @@ spec:
           name: shm-volume
           readOnly: false
         ports:
-        - containerPort: 8554
+        - containerPort: 8554    # still declared for clarity
           name: rtsp
       volumes:
       - name: udev
@@ -82,7 +83,7 @@ spec:
 
 To deploy the server:
 ```bash
-kubectl apply -f mediamtx-deploy.yaml
+kubectl apply -f mediamtx-daemonset.yaml
 ```
 
 
