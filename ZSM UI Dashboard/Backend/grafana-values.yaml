@@ -1,0 +1,16 @@
+USER-SUPPLIED VALUES:
+prometheus-node-exporter:
+  hostRootfs: true
+  nodeSelector:
+    kubernetes.io/os: linux
+
+grafana:
+  grafana.ini:
+    security:
+      allow_embedding: true
+    auth.anonymous:
+      enabled: true
+      org_role: Viewer
+  service:
+    type: NodePort
+    nodePort: 32722
