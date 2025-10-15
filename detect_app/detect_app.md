@@ -62,6 +62,7 @@ def main():
     parser.add_argument('--top_k', type=int, default=3,
                         help='number of categories with highest score to display')
     parser.add_argument('--camera_idx', type=int, help='Index of which video source to use. ', default = 0)
+    parser.add_argument('--url', type=str, help='RTSP video stream URL. ', default = None) # <-- 
     parser.add_argument('--threshold', type=float, default=0.1,
                         help='classifier score threshold')
     args = parser.parse_args()
@@ -76,10 +77,10 @@ def main():
     labels = read_label_file(args.labels)
     inference_size = input_size(interpreter)
 
-    #cap = cv2.VideoCapture(args.camera_idx)
-    cap = cv2.VideoCapture('rtsp://192.168.0.160:30000/unicast')
-    ## Replace 192.168.0.160 with the IP address of Raspberry Pi (can check with command hostname -I).
-    #cap = cv2.VideoCapture('rtsp://admin:mmuzte123@192.168.254.2:554/cam/realmonitor?channel=1&subtype=1')
+    cap = cv2.VideoCapture(args.url)  # <-- 
+    #cap = cv2.VideoCapture('rtsp://192.168.0.160:30000/unicast')
+    #cap = cv2.VideoCapture('rtsp://iot:30000/unicast')
+    #cap = cv2.VideoCapture('rtsp://admin:mmuzte123@192.168.0.160:554/cam/realmonitor?channel=1&subtype=1')
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -118,7 +119,7 @@ def append_objs_to_img(cv2_im, inference_size, objs, labels):
 
 if __name__ == '__main__':
     main()
-
+)
  ```
 
 
